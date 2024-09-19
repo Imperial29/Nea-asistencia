@@ -32,5 +32,5 @@ for (const file of eventFiles) {
         client.on(event.name, (...args) => event.execute(...args, client));
     }
 }
-
-client.login(token);
+const mySecret = process.env['EpicoLlave']
+client.login(mySecret);
