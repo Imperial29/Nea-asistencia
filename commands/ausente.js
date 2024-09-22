@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('discord.js');
-const { timers } = require('./asistencia.js'); // Importar desde el archivo asistencia.js
+const { timers } = require('./asistencia.js'); // Importar el temporizador global
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -13,8 +13,9 @@ module.exports = {
             return interaction.reply('No has iniciado la asistencia.');
         }
 
-        // Verificar si ya está en estado ausente
         const userTimer = timers.get(userId);
+
+        // Verificar si ya está en estado ausente
         if (userTimer.isPaused) {
             return interaction.reply('Ya estás en estado ausente.');
         }
@@ -24,15 +25,21 @@ module.exports = {
         const elapsedTime = currentTime - userTimer.startTime;
 
         userTimer.isPaused = true;
-        userTimer.elapsedTime = elapsedTime; // Guardar el tiempo transcurrido
+        userTimer.elapsedTime = elapsedTime; // Guardar el tiempo transcurrido antes de la pausa
         userTimer.pauseStartTime = currentTime; // Guardar el tiempo de inicio de la pausa
 
         // Configurar un temporizador para forzar la salida después de 1 hora (3600000 ms)
-        userTimer.timeout = setTimeout(() => {
-            // Si todavía está pausado después de 1 hora, hacer una salida automática
+        userTimer.timeout = setTimeout(async () => {
             if (userTimer.isPaused) {
+                // Finalizar la asistencia automáticamente después de 1 hora de ausencia
                 timers.delete(userId);
-                interaction.followUp(`**El staff ya no volvió.** Asistencia terminada para ${userTimer.nick}.\n\n**Tiempo total**: ${formatTime(userTimer.elapsedTime)}\n\nUsuarios: N/A\nChat: N/A\nStaff: N/A`);
+
+                const hours = Math.floor(elapsedTime / (1000 * 60 * 60));
+                const minutes = Math.floor((elapsedTime % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((elapsedTime % (1000 * 60)) / 1000);
+
+                // Enviar el mensaje indicando que el staff no volvió
+                await interaction.followUp(`**El staff ya no volvió.** Asistencia terminada para ${userTimer.nick}.\n\n**Tiempo total**: ${hours} horas, ${minutes} minutos, y ${seconds} segundos.\n\nUsuarios: N/A\nChat: N/A\nStaff: N/A`);
             }
         }, 3600000);
 
