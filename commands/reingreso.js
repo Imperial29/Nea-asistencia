@@ -1,35 +1,35 @@
 const { SlashCommandBuilder } = require('discord.js');
-const { timers } = require('./asistencia.js'); // Importar desde el archivo asistencia.js
+const { timers } = require('./asistencia.js'); // Asegúrate de ajustar la ruta
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('reingreso')
-        .setDescription('Reanuda el contador de asistencia después de un estado ausente'),
+        .setDescription('Reanuda el contador de asistencia tras el estado ausente'),
     async execute(interaction) {
         const userId = interaction.user.id;
 
-        // Verificar si el usuario ha iniciado la asistencia
+        // Verificar si el usuario ha iniciado la asistencia y está en estado ausente
         if (!timers.has(userId)) {
-            return interaction.reply('No has iniciado la asistencia.');
+            return interaction.reply('No tienes una asistencia en curso.');
         }
 
-        // Verificar si está en estado ausente
         const userTimer = timers.get(userId);
+
         if (!userTimer.isPaused) {
             return interaction.reply('No estás en estado ausente.');
         }
 
         // Reanudar el temporizador
         const currentTime = Date.now();
-        const pauseTime = currentTime - userTimer.pauseStartTime;
-
-        // Eliminar el temporizador de pausa automática
-        clearTimeout(userTimer.timeout);
+        const pauseDuration = currentTime - userTimer.pauseStartTime;
 
         userTimer.isPaused = false;
-        userTimer.startTime = currentTime; // Reiniciar el tiempo de inicio con el tiempo acumulado en la pausa
-        userTimer.pauseTime = pauseTime; // Agregar el tiempo de pausa
+        userTimer.startTime = currentTime; // Reiniciar desde el momento actual
+        userTimer.elapsedTime = (userTimer.elapsedTime || 0) + pauseDuration; // Continuar sumando al tiempo anterior
 
-        await interaction.reply(`Has reanudado el contador para ${userTimer.nick}.`);
+        // Cancelar el timeout de 1 hora si se reingresó antes de tiempo
+        clearTimeout(userTimer.timeout);
+
+        await interaction.reply(`Has reanudado el contador de asistencia para ${userTimer.nick}.`);
     }
 };
