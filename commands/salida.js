@@ -27,7 +27,7 @@ module.exports = {
         }
 
         // Obtener los detalles del temporizador
-        const { startTime, nick, isPaused, elapsedTime = 0, pauseTime = 0 } = timers.get(userId);
+        const { startTime, nick, isPaused, elapsedTime = 0, pauseTime = 0, timeout } = timers.get(userId);
         const endTime = Date.now();
         let totalElapsedTime;
 
@@ -36,6 +36,11 @@ module.exports = {
             totalElapsedTime = elapsedTime; // Si está pausado, usar el tiempo acumulado antes de la pausa
         } else {
             totalElapsedTime = elapsedTime + (endTime - startTime - pauseTime); // Tiempo transcurrido más el tiempo en pausa
+        }
+
+        // Cancelar el timeout de 1 hora configurado en ausente (si existe)
+        if (timeout) {
+            clearTimeout(timeout);
         }
 
         // Eliminar el temporizador del mapa
