@@ -6,6 +6,8 @@ module.exports = {
         .setName('ping')
         .setDescription('Responde con Pong!'),
     async execute(interaction , client) {
-        await interaction.reply('Pong!');
-    },
-};
+        await safeExecute(interaction, async (interaction) => {
+        await interaction.reply('Pong!');       
+     }); // <-- Cierra safeExecute
+    }, // <-- Cierra la función execute
+}; // <-- Cierra module.exports
