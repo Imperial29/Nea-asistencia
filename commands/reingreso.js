@@ -1,11 +1,12 @@
 const { SlashCommandBuilder } = require('discord.js');
 const { timers } = require('./asistencia.js'); // Asegúrate de ajustar la ruta
+const safeExecute = require('../utils/safeExecute');
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('reingreso')
         .setDescription('Reanuda el contador de asistencia tras el estado ausente'),
-    async execute(interaction) {
+    async execute(interaction, client) {
         const userId = interaction.user.id;
 
         // Verificar si el usuario ha iniciado la asistencia y está en estado ausente
