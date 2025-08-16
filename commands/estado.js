@@ -6,6 +6,7 @@ module.exports = {
         .setName('estado')
         .setDescription('Muestra el estado actual del bot'),
     async execute(interaction, client) {
+        await safeExecute(interaction, async (interaction) => {
         // Tiempo de actividad (uptime)
         const uptime = process.uptime(); // El tiempo en segundos desde que el bot fue iniciado
         const hours = Math.floor(uptime / 3600);
@@ -30,5 +31,6 @@ module.exports = {
 
         // Editar el mensaje inicial con el embed
         await interaction.editReply({ content: null, embeds: [estadoEmbed] });
+        });
     },
 };
