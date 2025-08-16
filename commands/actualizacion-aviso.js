@@ -1,6 +1,5 @@
 const { SlashCommandBuilder } = require('discord.js');
 const { timers } = require('./asistencia.js'); // Asegúrate de ajustar la ruta
-const safeExecute = require('../utils/safeExecute');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -11,14 +10,13 @@ module.exports = {
                 .setDescription('Tiempo en minutos hasta la actualización')
                 .setRequired(true)),
 
-    async execute(interaction, client) {
-        await safeExecute(interaction, async (interaction) => {
+    async execute(interaction) {
         const tiempo = interaction.options.getInteger('tiempo'); // Obtener el tiempo en minutos
         const tiempoMs = tiempo * 60000; // Convertir minutos a milisegundos
 
         // Verificar si hay usuarios con asistencias activas en el Map 'timers'
         if (timers.size === 0) {
-            return interaction.editReply('No hay usuarios con asistencias activas o ausentes.');
+            return interaction.reply('No hay usuarios con asistencias activas o ausentes.');
         }
 
         // Enviar el mensaje de notificación a cada canal donde se inició la asistencia
@@ -31,7 +29,7 @@ module.exports = {
         }
 
         // Enviar un mensaje general en el canal donde se ejecuta /actualizacion-aviso
-        await interaction.editReply('Aviso enviado a los canales correspondientes.');
+        await interaction.reply('Aviso enviado a los canales correspondientes.');
 
         // Configurar un temporizador para finalizar las asistencias después del tiempo especificado
         setTimeout(async () => {
@@ -58,6 +56,5 @@ module.exports = {
                 timers.delete(userId);
             }
         }, tiempoMs); // Esperar el tiempo especificado antes de finalizar las asistencias
-            }); // <-- Cierra safeExecute
-    }, // <-- Cierra la función execute
-}; // <-- Cierra module.exports
+    },
+};
