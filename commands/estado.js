@@ -14,7 +14,7 @@ module.exports = {
         const seconds = Math.floor(uptime % 60);
 
         // Latencia (ping)
-        const sentMessage = await interaction.reply({ content: 'Verificando estado...', fetchReply: true });
+        const sentMessage = await interaction.editReply({ content: 'Verificando estado...', fetchReply: true });
         const latency = sentMessage.createdTimestamp - interaction.createdTimestamp;
 
         // Crear un Embed con la información
