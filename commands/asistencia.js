@@ -1,4 +1,5 @@
 const { SlashCommandBuilder } = require('discord.js');
+const safeExecute = require('../utils/safeExecute');
 
 // Mapa para guardar los tiempos de inicio, nicks, y el canal por usuario
 const timers = new Map();
