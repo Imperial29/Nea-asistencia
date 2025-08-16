@@ -1,25 +1,23 @@
 const { SlashCommandBuilder } = require('discord.js');
 const { timers } = require('./asistencia.js'); // Asegúrate de ajustar la ruta según tu estructura
-const safeExecute = require('../utils/safeExecute');
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('ausente')
         .setDescription('Pone en pausa el contador de asistencia'),
-    async execute(interaction, client) {
-        await safeExecute(interaction, async (interaction) => {
+    async execute(interaction) {
         const userId = interaction.user.id;
 
         // Verificar si el usuario ha iniciado la asistencia
         if (!timers.has(userId)) {
-            return interaction.editReply('No has iniciado la asistencia.');
+            return interaction.reply('No has iniciado la asistencia.');
         }
 
         const userTimer = timers.get(userId);
 
         // Verificar si ya está en estado ausente
         if (userTimer.isPaused) {
-            return interaction.editReply('Ya estás en estado ausente.');
+            return interaction.reply('Ya estás en estado ausente.');
         }
 
         // Pausar el temporizador
@@ -31,7 +29,7 @@ module.exports = {
         userTimer.pauseStartTime = currentTime; // Guardar el tiempo de inicio de la pausa
 
         // Enviar confirmación de que el temporizador se ha pausado
-        await interaction.editReply(`Has activado el estado ausente. El contador ha sido pausado para ${userTimer.nick}.`);
+        await interaction.reply(`Has activado el estado ausente. El contador ha sido pausado para ${userTimer.nick}.`);
 
         // Configurar un temporizador para forzar la salida después de 1 hora (3600000 ms)
         userTimer.timeout = setTimeout(async () => {
@@ -55,6 +53,5 @@ module.exports = {
                 timers.delete(userId);
             }
         }, 3600000); // Esperar 1 hora (3600000 ms) antes de finalizar la asistencia
-     }); // <-- Cierra safeExecute
-    }, // <-- Cierra la función execute
-}; // <-- Cierra module.exports
+    },
+};
