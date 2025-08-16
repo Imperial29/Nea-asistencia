@@ -10,7 +10,7 @@ module.exports = {
                 .setDescription('Tiempo en minutos hasta la actualización')
                 .setRequired(true)),
 
-    async execute(interaction) {
+    async execute(interaction, client) {
         const tiempo = interaction.options.getInteger('tiempo'); // Obtener el tiempo en minutos
         const tiempoMs = tiempo * 60000; // Convertir minutos a milisegundos
 
