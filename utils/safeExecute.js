@@ -2,34 +2,42 @@ module.exports = async function safeExecute(interaction, callback, options = {})
     const { ephemeral = false, defer = true } = options;
 
     try {
-        // 📌 Log inicial: quién ejecuta el comando
         console.log(`⚡ [Comando] ${interaction.user.tag} (${interaction.user.id}) ejecutó /${interaction.commandName}`);
 
-        // Diferimos la respuesta para evitar timeout (si está habilitado)
+        // Diferimos la respuesta si es necesario
+        let deferred = false;
         if (defer) {
-            await interaction.deferReply({ ephemeral });
+            try {
+                await interaction.deferReply({ ephemeral });
+                deferred = true;
+            } catch (deferError) {
+                console.warn('⚠️ No se pudo diferir la interacción, probablemente ya fue respondida.');
+            }
         }
 
-        // Ejecutamos la lógica del comando
+        // Ejecutamos la lógica principal del comando
         await callback(interaction);
 
-        // 📌 Log de éxito
         console.log(`✅ [Comando] /${interaction.commandName} ejecutado correctamente por ${interaction.user.tag}`);
     } catch (error) {
-        // 📌 Log de error
         console.error(`❌ [Comando] Error en /${interaction.commandName} ejecutado por ${interaction.user.tag}:`, error);
 
-        // Manejo seguro del error en Discord
-        if (interaction.deferred || interaction.replied) {
-            await interaction.followUp({ 
-                content: '❌ Hubo un error al ejecutar este comando.', 
-                ephemeral: true 
-            });
-        } else {
-            await interaction.reply({ 
-                content: '❌ Hubo un error al ejecutar este comando.', 
-                ephemeral: true 
-            });
+        // Intentamos responder de manera segura al error
+        try {
+            if (interaction.deferred || interaction.replied || deferred) {
+                await interaction.followUp({ 
+                    content: '❌ Hubo un error al ejecutar este comando.', 
+                    ephemeral: true 
+                });
+            } else {
+                await interaction.reply({ 
+                    content: '❌ Hubo un error al ejecutar este comando.', 
+                    ephemeral: true 
+                });
+            }
+        } catch (replyError) {
+            // ⚠️ Ignoramos el error si la interacción ya expiró
+            console.error('❌ Error al intentar notificar el fallo de la interacción:', replyError);
         }
     }
 };
