@@ -13,6 +13,7 @@ module.exports = {
                 .setDescription('Proporciona tu Nick')
                 .setRequired(true)),
     async execute(interaction, client) {
+        await safeExecute(interaction, async (interaction) => {
         const userId = interaction.user.id;
         const nick = interaction.options.getString('nick'); // Obtener el Nick del usuario
         const channelId = interaction.channel.id; // Guardar el canal donde se ejecuta el comando
@@ -26,9 +27,10 @@ module.exports = {
         const startTime = Date.now();
         timers.set(userId, { startTime, nick, channelId });
 
-        await interaction.reply(`¡Asistencia iniciada! El contador ha comenzado para el Staff: **${nick}**.`);
-    },
-};
+        await interaction.reply(`¡Asistencia iniciada! El contador ha comenzado para el Staff: **${nick}**.`);      
+     }); // <-- Cierra safeExecute
+    }, // <-- Cierra la función execute
+}; // <-- Cierra module.exports
 
 // Exportar el objeto timers para usar en otros comandos
 module.exports.timers = timers;
