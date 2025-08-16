@@ -1,17 +1,17 @@
-const safeExecute = require('../utils/safeExecute');
-
 module.exports = {
     name: 'interactionCreate',
     async execute(interaction, client) {
-        if (!interaction.isChatInputCommand()) return;
+        if (!interaction.isCommand()) return;
 
         const command = client.commands.get(interaction.commandName);
+
         if (!command) return;
 
-        // 🔹 Ejecutar safeExecute, defer inmediato dentro de safeExecute
-        await safeExecute(interaction, async (i, { reply }) => {
-            // Pasamos el reply seguro al comando
-            await command.execute(i, { reply });
-        });
+        try {
+            await command.execute(interaction);
+        } catch (error) {
+            console.error(error);
+            await interaction.reply({ content: 'Hubo un error al ejecutar este comando!', ephemeral: true });
+        }
     },
 };
