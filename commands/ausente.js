@@ -12,14 +12,14 @@ module.exports = {
 
         // Verificar si el usuario ha iniciado la asistencia
         if (!timers.has(userId)) {
-            return interaction.reply('No has iniciado la asistencia.');
+            return interaction.editReply('No has iniciado la asistencia.');
         }
 
         const userTimer = timers.get(userId);
 
         // Verificar si ya está en estado ausente
         if (userTimer.isPaused) {
-            return interaction.reply('Ya estás en estado ausente.');
+            return interaction.editReply('Ya estás en estado ausente.');
         }
 
         // Pausar el temporizador
@@ -31,7 +31,7 @@ module.exports = {
         userTimer.pauseStartTime = currentTime; // Guardar el tiempo de inicio de la pausa
 
         // Enviar confirmación de que el temporizador se ha pausado
-        await interaction.reply(`Has activado el estado ausente. El contador ha sido pausado para ${userTimer.nick}.`);
+        await interaction.editReply(`Has activado el estado ausente. El contador ha sido pausado para ${userTimer.nick}.`);
 
         // Configurar un temporizador para forzar la salida después de 1 hora (3600000 ms)
         userTimer.timeout = setTimeout(async () => {
