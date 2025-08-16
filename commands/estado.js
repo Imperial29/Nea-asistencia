@@ -1,10 +1,11 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const safeExecute = require('../utils/safeExecute');
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('estado')
         .setDescription('Muestra el estado actual del bot'),
-    async execute(interaction) {
+    async execute(interaction, client) {
         // Tiempo de actividad (uptime)
         const uptime = process.uptime(); // El tiempo en segundos desde que el bot fue iniciado
         const hours = Math.floor(uptime / 3600);
