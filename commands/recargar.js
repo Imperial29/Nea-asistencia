@@ -15,7 +15,7 @@ module.exports = {
             interaction.client.commands.set(command.data.name, command);
         }
 
-        await interaction.reply({ content: 'Todos los comandos han sido recargados exitosamente.', ephemeral: true });
+        await interaction.editReply({ content: 'Todos los comandos han sido recargados exitosamente.', ephemeral: true });
     }); // <-- Cierra safeExecute
     }, // <-- Cierra la función execute
 }; // <-- Cierra module.exports
