@@ -1,6 +1,5 @@
 const { SlashCommandBuilder } = require('discord.js');
 const { timers } = require('./asistencia.js'); // Importar desde el archivo asistencia.js
-const safeExecute = require('../utils/safeExecute');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -19,13 +18,13 @@ module.exports = {
                 .setDescription('Proporciona información sobre el staff responsable')
                 .setRequired(true)),
 
-    async execute(interaction, client) {
-        await safeExecute(interaction, async (interaction) => {
-            const userId = interaction.user.id;
+    async execute(interaction) {
+        const userId = interaction.user.id;
 
-            if (!timers.has(userId)) {
-                return interaction.editReply('No has iniciado la asistencia.');
-            }
+        // Verificar si el usuario ha iniciado la asistencia
+        if (!timers.has(userId)) {
+            return interaction.reply('No has iniciado la asistencia.');
+        }
 
         // Obtener los detalles del temporizador
         const { startTime, nick, isPaused, elapsedTime = 0, pauseTime = 0, timeout } = timers.get(userId);
@@ -58,7 +57,6 @@ module.exports = {
         const staff = interaction.options.getString('staff');
 
         // Responder con el Nick, tiempo y la información extra
-        await interaction.editReply(`Ha terminado la asistencia para **${nick}**.\n\n**Tiempo total**: ${hours} horas, ${minutes} minutos, y ${seconds} segundos.\n\n**Usuarios**: ${usuarios}\n**Chat**: ${chat}\n**Staffs**: ${staff}`);
-    }); // <-- Cierra safeExecute
-    }, // <-- Cierra la función execute
-}; // <-- Cierra module.exports
+        await interaction.reply(`Ha terminado la asistencia para **${nick}**.\n\n**Tiempo total**: ${hours} horas, ${minutes} minutos, y ${seconds} segundos.\n\n**Usuarios**: ${usuarios}\n**Chat**: ${chat}\n**Staffs**: ${staff}`);
+    }
+};
