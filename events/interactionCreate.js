@@ -1,21 +1,22 @@
-module.exports = {
-    name: 'interactionCreate',
-    async execute(interaction, client) {
-        if (!interaction.isChatInputCommand()) return;
+client.on('interactionCreate', async (interaction) => {
+    if (!interaction.isChatInputCommand()) return;
 
-        const command = client.commands.get(interaction.commandName);
-        if (!command) return;
+    const command = client.commands.get(interaction.commandName);
+    if (!command) return;
 
-        try {
-            await command.execute(interaction, client);
-        } catch (error) {
-            console.error(error);
+    // 1️⃣ Diferir inmediatamente
+    try {
+        await interaction.deferReply({ ephemeral: false });
+    } catch(err) {
+        console.warn('No se pudo deferir la interacción:', err.message);
+    }
 
-            if (interaction.deferred || interaction.replied) {
-                await interaction.followUp({ content: 'Oh No Hubo Un Error Al Ejecutar Este Comando!', ephemeral: true });
-            } else {
-                await interaction.reply({ content: 'Ay Ya me dio amsiedad Hubo un error al ejecutar este comando!', ephemeral: true });
-            }
-        }
-    },
-};
+    // 2️⃣ Ejecutar safeExecute
+    try {
+        await safeExecute(interaction, async (i, { reply }) => {
+            await command.execute(i, { reply });
+        }, { defer: false }); // defer ya hicimos arriba
+    } catch (error) {
+        console.error('Error en safeExecute:', error);
+    }
+});
