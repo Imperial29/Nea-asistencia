@@ -1,22 +1,17 @@
-client.on('interactionCreate', async (interaction) => {
-    if (!interaction.isChatInputCommand()) return;
+const safeExecute = require('../utils/safeExecute');
 
-    const command = client.commands.get(interaction.commandName);
-    if (!command) return;
+module.exports = {
+    name: 'interactionCreate',
+    async execute(interaction, client) {
+        if (!interaction.isChatInputCommand()) return;
 
-    // 1️⃣ Diferir inmediatamente
-    try {
-        await interaction.deferReply({ ephemeral: false });
-    } catch(err) {
-        console.warn('No se pudo deferir la interacción:', err.message);
-    }
+        const command = client.commands.get(interaction.commandName);
+        if (!command) return;
 
-    // 2️⃣ Ejecutar safeExecute
-    try {
+        // 🔹 Ejecutar safeExecute, defer inmediato dentro de safeExecute
         await safeExecute(interaction, async (i, { reply }) => {
+            // Pasamos el reply seguro al comando
             await command.execute(i, { reply });
-        }, { defer: false }); // defer ya hicimos arriba
-    } catch (error) {
-        console.error('Error en safeExecute:', error);
-    }
-});
+        });
+    },
+};
