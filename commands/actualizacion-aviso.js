@@ -1,5 +1,6 @@
 const { SlashCommandBuilder } = require('discord.js');
 const { timers } = require('./asistencia.js'); // Asegúrate de ajustar la ruta
+const safeExecute = require('../utils/safeExecute');
 
 module.exports = {
     data: new SlashCommandBuilder()
