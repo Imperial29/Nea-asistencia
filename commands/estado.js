@@ -1,43 +1,33 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
-const safeExecute = require('../utils/safeExecute');
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('estado')
         .setDescription('Muestra el estado actual del bot'),
-    async execute(interaction, { reply }) {
-        await safeExecute(interaction, async (i, { reply }) => {
-            // 🔹 Usamos reply seguro para mensaje inicial
-            await reply({ content: 'Verificando estado...' });
+    async execute(interaction) {
+        // Tiempo de actividad (uptime)
+        const uptime = process.uptime(); // El tiempo en segundos desde que el bot fue iniciado
+        const hours = Math.floor(uptime / 3600);
+        const minutes = Math.floor((uptime % 3600) / 60);
+        const seconds = Math.floor(uptime % 60);
 
-            // Latencia 1: diferencia entre mensaje enviado y creación de interacción
-            const latencyReply = i.createdTimestamp ? Date.now() - i.createdTimestamp : 0;
+        // Latencia (ping)
+        const sentMessage = await interaction.reply({ content: 'Verificando estado...', fetchReply: true });
+        const latency = sentMessage.createdTimestamp - interaction.createdTimestamp;
 
-            // Latencia 2: tiempo de proceso
-            const start = Date.now();
-            const latencyProcess = Date.now() - start;
+        // Crear un Embed con la información
+        const estadoEmbed = new EmbedBuilder()
+            .setColor(0x00FF00) // Color verde para indicar que el bot está activo
+            .setTitle('📊 Estado del Bot')
+            .setDescription('Aquí puedes ver el estado actual del bot:')
+            .addFields(
+                { name: '⏳ Tiempo de actividad', value: `${hours} horas, ${minutes} minutos, y ${seconds} segundos` },
+                { name: '📡 Latencia', value: `${latency} ms` },
+            )
+            .setTimestamp() // Marca de tiempo actual
+            .setFooter({ text: 'Sistema de asistencia', iconURL: interaction.client.user.displayAvatarURL() });
 
-            // Tiempo de actividad
-            const uptime = process.uptime();
-            const hours = Math.floor(uptime / 3600);
-            const minutes = Math.floor((uptime % 3600) / 60);
-            const seconds = Math.floor(uptime % 60);
-
-            // Crear embed
-            const estadoEmbed = new EmbedBuilder()
-                .setColor(0x00FF00)
-                .setTitle('📊 Estado del Bot')
-                .setDescription('Aquí puedes ver el estado actual del bot:')
-                .addFields(
-                    { name: '⏳ Tiempo de actividad', value: `${hours} horas, ${minutes} minutos y ${seconds} segundos` },
-                    { name: '📡 Latencia (respuesta)', value: `${latencyReply} ms` },
-                    { name: '⚙️ Latencia (proceso)', value: `${latencyProcess} ms` },
-                )
-                .setTimestamp()
-                .setFooter({ text: 'Sistema de asistencia', iconURL: i.client.user.displayAvatarURL() });
-
-            // Editar la interacción inicial con el embed
-            await reply({ content: '', embeds: [estadoEmbed] });
-        });
+        // Editar el mensaje inicial con el embed
+        await interaction.editReply({ content: null, embeds: [estadoEmbed] });
     },
 };
