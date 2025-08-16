@@ -7,6 +7,7 @@ module.exports = {
         .setName('ausente')
         .setDescription('Pone en pausa el contador de asistencia'),
     async execute(interaction, client) {
+        await safeExecute(interaction, async (interaction) => {
         const userId = interaction.user.id;
 
         // Verificar si el usuario ha iniciado la asistencia
@@ -54,5 +55,6 @@ module.exports = {
                 timers.delete(userId);
             }
         }, 3600000); // Esperar 1 hora (3600000 ms) antes de finalizar la asistencia
-    }
-};
+     }); // <-- Cierra safeExecute
+    }, // <-- Cierra la función execute
+}; // <-- Cierra module.exports
