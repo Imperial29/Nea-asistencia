@@ -6,6 +6,7 @@ module.exports = {
         .setName('rolembed')
         .setDescription('Envía un embed para asignar roles.'),
     async execute(interaction , client) {
+        await safeExecute(interaction, async (interaction) => {
         const embed = new EmbedBuilder()
             .setTitle('Reacciona para obtener un rol')
             .setDescription('Reacciona con ✅ para obtener el rol de Miembro.')
@@ -28,5 +29,6 @@ module.exports = {
                 await interaction.followUp(`${user.username} ha recibido el rol de Miembro.`);
             }
         });
-    },
-};
+    }); // <-- Cierra safeExecute
+    }, // <-- Cierra la función execute
+}; // <-- Cierra module.exports
