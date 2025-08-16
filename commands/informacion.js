@@ -1,10 +1,11 @@
 const { SlashCommandBuilder } = require('discord.js');
+const safeExecute = require('../utils/safeExecute');
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('informacion')
         .setDescription('Muestra la información sobre cómo usar los comandos del bot'),
-    async execute(interaction) {
+    async execute(interaction , client) {
         const helpMessage = `
 **¡Bienvenido al sistema de asistencia del bot! Aquí te explico cómo usar los comandos disponibles:**
 
