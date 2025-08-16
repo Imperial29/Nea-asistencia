@@ -12,13 +12,13 @@ module.exports = {
 
         // Verificar si el usuario ha iniciado la asistencia y está en estado ausente
         if (!timers.has(userId)) {
-            return interaction.reply('No tienes una asistencia en curso.');
+            return interaction.editReply('No tienes una asistencia en curso.');
         }
 
         const userTimer = timers.get(userId);
 
         if (!userTimer.isPaused) {
-            return interaction.reply('No estás en estado ausente.');
+            return interaction.editReply('No estás en estado ausente.');
         }
 
         // Reanudar el temporizador
