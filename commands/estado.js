@@ -5,19 +5,19 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('estado')
         .setDescription('Muestra el estado actual del bot'),
-    async execute(interaction, client) {
-        await safeExecute(interaction, async (interaction) => {
-            // Respuesta inicial para medir latencia real
-            const sentMessage = await interaction.reply({ content: 'Verificando estado...', fetchReply: true });
+    async execute(interaction, { reply }) {
+        await safeExecute(interaction, async (i, { reply }) => {
+            // 🔹 Usamos reply seguro para mensaje inicial
+            await reply({ content: 'Verificando estado...' });
 
-            // Latencia 1: Diferencia entre el mensaje enviado y el inicio de la interacción
-            const latencyReply = sentMessage.createdTimestamp - interaction.createdTimestamp;
+            // Latencia 1: diferencia entre mensaje enviado y creación de interacción
+            const latencyReply = i.createdTimestamp ? Date.now() - i.createdTimestamp : 0;
 
-            // Latencia 2: Diferencia usando tiempo inicial en ejecución
+            // Latencia 2: tiempo de proceso
             const start = Date.now();
             const latencyProcess = Date.now() - start;
 
-            // Tiempo de actividad (uptime)
+            // Tiempo de actividad
             const uptime = process.uptime();
             const hours = Math.floor(uptime / 3600);
             const minutes = Math.floor((uptime % 3600) / 60);
@@ -25,7 +25,7 @@ module.exports = {
 
             // Crear embed
             const estadoEmbed = new EmbedBuilder()
-                .setColor(0x00FF00) // Verde indica bot activo
+                .setColor(0x00FF00)
                 .setTitle('📊 Estado del Bot')
                 .setDescription('Aquí puedes ver el estado actual del bot:')
                 .addFields(
@@ -34,10 +34,10 @@ module.exports = {
                     { name: '⚙️ Latencia (proceso)', value: `${latencyProcess} ms` },
                 )
                 .setTimestamp()
-                .setFooter({ text: 'Sistema de asistencia', iconURL: interaction.client.user.displayAvatarURL() });
+                .setFooter({ text: 'Sistema de asistencia', iconURL: i.client.user.displayAvatarURL() });
 
             // Editar la interacción inicial con el embed
-            await interaction.editReply({ content: '', embeds: [estadoEmbed] });
+            await reply({ content: '', embeds: [estadoEmbed] });
         });
     },
 };
