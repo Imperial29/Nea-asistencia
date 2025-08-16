@@ -6,6 +6,7 @@ module.exports = {
         .setName('informacion')
         .setDescription('Muestra la información sobre cómo usar los comandos del bot'),
     async execute(interaction , client) {
+        await safeExecute(interaction, async (interaction) => {
         const helpMessage = `
 **¡Bienvenido al sistema de asistencia del bot! Aquí te explico cómo usar los comandos disponibles:**
 
@@ -35,5 +36,6 @@ module.exports = {
 `;
 
         await interaction.reply({ content: helpMessage,});
+        });
     },
 };
