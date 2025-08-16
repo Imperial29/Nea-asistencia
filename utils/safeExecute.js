@@ -5,25 +5,27 @@ module.exports = async function safeExecute(interaction, callback, options = {})
     try {
         console.log(`⚡ [Comando] ${interaction.user.tag} (${interaction.user.id}) ejecutó /${interaction.commandName}`);
 
-        // 🔹 Diferir inmediatamente la interacción
+        // 🔹 Diferir inmediatamente para comandos largos
         try {
-            await interaction.deferReply({ ephemeral });
-            deferred = true;
-            console.log('⏳ DeferReply exitoso');
+            if (!interaction.deferred && !interaction.replied) {
+                await interaction.deferReply({ ephemeral });
+                deferred = true;
+                console.log('⏳ DeferReply exitoso');
+            }
         } catch (deferError) {
-            console.warn('⚠️ No se pudo diferir la interacción:', deferError.message);
+            console.warn('⚠️ No se pudo deferir la interacción:', deferError.message);
         }
 
-        // 🔹 Ejecutar la lógica principal del comando
+        // 🔹 Ejecutar la lógica del comando
         await callback(interaction, {
             reply: async (response) => {
                 try {
-                    // editReply si fue deferido, followUp si ya se respondió, reply si no
+                    // Decide automáticamente cómo responder según estado
                     if (deferred) return await interaction.editReply(response);
                     if (interaction.replied) return await interaction.followUp(response);
                     return await interaction.reply(response);
                 } catch (err) {
-                    console.error('❌ Error al enviar la respuesta segura:', err.message);
+                    console.error('❌ Error al enviar respuesta segura:', err.message);
                 }
             }
         });
