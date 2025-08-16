@@ -1,12 +1,10 @@
 const { SlashCommandBuilder } = require('discord.js');
-const safeExecute = require('../utils/safeExecute');
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('informacion')
         .setDescription('Muestra la información sobre cómo usar los comandos del bot'),
-    async execute(interaction , client) {
-        await safeExecute(interaction, async (interaction) => {
+    async execute(interaction) {
         const helpMessage = `
 **¡Bienvenido al sistema de asistencia del bot! Aquí te explico cómo usar los comandos disponibles:**
 
@@ -35,7 +33,6 @@ module.exports = {
 **Nota:** El bot esta preparado para recibir de manera desordenada los comandos pero Recuerda usar estos comandos en el orden correcto para llevar un registro preciso de tu asistencia.
 `;
 
-        await interaction.editReply({ content: helpMessage,});
-        });
+        await interaction.reply({ content: helpMessage,});
     },
 };
