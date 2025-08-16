@@ -1,18 +1,16 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
-const safeExecute = require('../utils/safeExecute');
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('rolembed')
         .setDescription('Envía un embed para asignar roles.'),
-    async execute(interaction , client) {
-        await safeExecute(interaction, async (interaction) => {
+    async execute(interaction) {
         const embed = new EmbedBuilder()
             .setTitle('Reacciona para obtener un rol')
             .setDescription('Reacciona con ✅ para obtener el rol de Miembro.')
             .setColor(0x0099ff);
 
-        const message = await interaction.editReply({ embeds: [embed], fetchReply: true });
+        const message = await interaction.reply({ embeds: [embed], fetchReply: true });
         await message.react('✅');
 
         const filter = (reaction, user) => {
@@ -29,6 +27,5 @@ module.exports = {
                 await interaction.followUp(`${user.username} ha recibido el rol de Miembro.`);
             }
         });
-    }); // <-- Cierra safeExecute
-    }, // <-- Cierra la función execute
-}; // <-- Cierra module.exports
+    },
+};
