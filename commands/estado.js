@@ -7,9 +7,11 @@ module.exports = {
         .setDescription('Muestra el estado actual del bot'),
     async execute(interaction, client) {
         await safeExecute(interaction, async (interaction) => {
+            // Registrar tiempo inicial para calcular latencia
+            const start = Date.now();
+
             // Tiempo de actividad (uptime)
-            const start = Date.now(); // Para medir latencia
-            const uptime = process.uptime(); // El tiempo en segundos desde que el bot fue iniciado
+            const uptime = process.uptime(); // segundos desde que se inició el bot
             const hours = Math.floor(uptime / 3600);
             const minutes = Math.floor((uptime % 3600) / 60);
             const seconds = Math.floor(uptime % 60);
@@ -17,9 +19,9 @@ module.exports = {
             // Latencia (ping) aproximada
             const latency = Date.now() - start;
 
-            // Crear un Embed con la información
+            // Crear embed con la información
             const estadoEmbed = new EmbedBuilder()
-                .setColor(0x00FF00) // Color verde para indicar que el bot está activo
+                .setColor(0x00FF00) // Verde indica bot activo
                 .setTitle('Estado del Bot')
                 .setDescription('Aquí puedes ver el estado actual del bot:')
                 .addFields(
@@ -29,7 +31,7 @@ module.exports = {
                 .setTimestamp() // Marca de tiempo actual
                 .setFooter({ text: 'Sistema de asistencia', iconURL: interaction.client.user.displayAvatarURL() });
 
-            // Editar la interacción con el embed y el mensaje de verificación
+            // Editar la interacción inicial con el embed
             await interaction.editReply({ content: 'Verificando estado...', embeds: [estadoEmbed] });
         });
     },
