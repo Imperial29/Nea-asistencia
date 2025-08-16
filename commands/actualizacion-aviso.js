@@ -18,7 +18,7 @@ module.exports = {
 
         // Verificar si hay usuarios con asistencias activas en el Map 'timers'
         if (timers.size === 0) {
-            return interaction.reply('No hay usuarios con asistencias activas o ausentes.');
+            return interaction.editReply('No hay usuarios con asistencias activas o ausentes.');
         }
 
         // Enviar el mensaje de notificación a cada canal donde se inició la asistencia
@@ -31,7 +31,7 @@ module.exports = {
         }
 
         // Enviar un mensaje general en el canal donde se ejecuta /actualizacion-aviso
-        await interaction.reply('Aviso enviado a los canales correspondientes.');
+        await interaction.editReply('Aviso enviado a los canales correspondientes.');
 
         // Configurar un temporizador para finalizar las asistencias después del tiempo especificado
         setTimeout(async () => {
