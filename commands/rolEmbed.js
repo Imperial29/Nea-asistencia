@@ -12,7 +12,7 @@ module.exports = {
             .setDescription('Reacciona con ✅ para obtener el rol de Miembro.')
             .setColor(0x0099ff);
 
-        const message = await interaction.reply({ embeds: [embed], fetchReply: true });
+        const message = await interaction.editReply({ embeds: [embed], fetchReply: true });
         await message.react('✅');
 
         const filter = (reaction, user) => {
