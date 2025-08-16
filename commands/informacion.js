@@ -35,7 +35,7 @@ module.exports = {
 **Nota:** El bot esta preparado para recibir de manera desordenada los comandos pero Recuerda usar estos comandos en el orden correcto para llevar un registro preciso de tu asistencia.
 `;
 
-        await interaction.reply({ content: helpMessage,});
+        await interaction.editReply({ content: helpMessage,});
         });
     },
 };
