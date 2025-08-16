@@ -11,7 +11,7 @@ module.exports = {
             option.setName('nick')
                 .setDescription('Proporciona tu Nick')
                 .setRequired(true)),
-    async execute(interaction) {
+    async execute(interaction, client) {
         const userId = interaction.user.id;
         const nick = interaction.options.getString('nick'); // Obtener el Nick del usuario
         const channelId = interaction.channel.id; // Guardar el canal donde se ejecuta el comando
