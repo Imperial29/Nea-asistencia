@@ -20,14 +20,14 @@ module.exports = {
 
         // Comprobar si ya hay un temporizador corriendo para el usuario
         if (timers.has(userId)) {
-            return interaction.reply('Ya has iniciado la asistencia.');
+            return interaction.editReply('Ya has iniciado la asistencia.');
         }
 
         // Guardar la hora de inicio, el Nick y el Canal
         const startTime = Date.now();
         timers.set(userId, { startTime, nick, channelId });
 
-        await interaction.reply(`¡Asistencia iniciada! El contador ha comenzado para el Staff: **${nick}**.`);      
+        await interaction.editReply(`¡Asistencia iniciada! El contador ha comenzado para el Staff: **${nick}**.`);      
      }); // <-- Cierra safeExecute
     }, // <-- Cierra la función execute
 }; // <-- Cierra module.exports
