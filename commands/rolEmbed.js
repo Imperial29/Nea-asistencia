@@ -1,10 +1,11 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const safeExecute = require('../utils/safeExecute');
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('rolembed')
         .setDescription('Envía un embed para asignar roles.'),
-    async execute(interaction) {
+    async execute(interaction , client) {
         const embed = new EmbedBuilder()
             .setTitle('Reacciona para obtener un rol')
             .setDescription('Reacciona con ✅ para obtener el rol de Miembro.')
