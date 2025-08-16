@@ -12,6 +12,7 @@ module.exports = {
                 .setRequired(true)),
 
     async execute(interaction, client) {
+        await safeExecute(interaction, async (interaction) => {
         const tiempo = interaction.options.getInteger('tiempo'); // Obtener el tiempo en minutos
         const tiempoMs = tiempo * 60000; // Convertir minutos a milisegundos
 
@@ -57,5 +58,6 @@ module.exports = {
                 timers.delete(userId);
             }
         }, tiempoMs); // Esperar el tiempo especificado antes de finalizar las asistencias
-    }
-};
+            }); // <-- Cierra safeExecute
+    }, // <-- Cierra la función execute
+}; // <-- Cierra module.exports
