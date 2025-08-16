@@ -1,11 +1,12 @@
 const { SlashCommandBuilder } = require('discord.js');
 const { timers } = require('./asistencia.js'); // Asegúrate de ajustar la ruta según tu estructura
+const safeExecute = require('../utils/safeExecute');
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('ausente')
         .setDescription('Pone en pausa el contador de asistencia'),
-    async execute(interaction) {
+    async execute(interaction, client) {
         const userId = interaction.user.id;
 
         // Verificar si el usuario ha iniciado la asistencia
